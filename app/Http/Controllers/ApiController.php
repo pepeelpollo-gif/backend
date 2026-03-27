@@ -21,9 +21,9 @@ class ApiController extends Controller
     }
 
 
-    public function cargaClientes()
-    {
-        $clientes = Cliente::orderBy('nomcli', 'asc')->get();
+    public function obtenerClientes() {
+        // Consultamos todos los clientes
+        $clientes = DB::select('SELECT * FROM clientes ORDER BY id_cliente DESC');
         return response()->json($clientes, 200);
     }
 
@@ -60,33 +60,49 @@ class ApiController extends Controller
             return response()->json(['mensaje' => 'Cliente no encontrado'], 404);
         }
 
+    // POST: Crear cliente nuevo (Ahora incluye foto)
     public function altaCliente(Request $request) {
-            $query = "INSERT INTO clientes (
-                nomcli, genero, servicio, telefono, correo, alergias, notas, estatusCliente, costoEstimado, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+        $query = "INSERT INTO clientes (
+            nomcli, foto, genero, servicio, telefono, correo, alergias, notas, estatusCliente, costoEstimado, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
-            $insertar = DB::insert($query, [
-                $request->input('nomcli'), $request->input('genero'), $request->input('servicio'),
-                $request->input('telefono'), $request->input('correo'), $request->input('alergias'),
-                $request->input('notas'), $request->input('estatusCliente', 'Activo'), $request->input('costoEstimado')
-            ]);
+        $insertar = DB::insert($query, [
+            $request->input('nomcli'), 
+            $request->input('foto', 'fotos/chikito.jpg'), // <-- Foto por defecto si el form no manda una
+            $request->input('genero'), 
+            $request->input('servicio'),
+            $request->input('telefono'), 
+            $request->input('correo'), 
+            $request->input('alergias'),
+            $request->input('notas'), 
+            $request->input('estatusCliente', 'Activo'), 
+            $request->input('costoEstimado')
+        ]);
 
-            if ($insertar) {
-                return response()->json(['mensaje' => 'Cliente creado correctamente'], 201);
-            }
-            return response()->json(['mensaje' => 'Error al crear'], 500);
+        if ($insertar) {
+            return response()->json(['mensaje' => 'Cliente creado correctamente'], 201);
         }
+        return response()->json(['mensaje' => 'Error al crear'], 500);
+    }
 
+    // PUT: Modificar un cliente existente (Ahora incluye foto)
     public function modificaCliente(Request $request, $id_cliente) {
         $query = "UPDATE clientes SET 
-            nomcli = ?, genero = ?, servicio = ?, telefono = ?, correo = ?, 
+            nomcli = ?, foto = ?, genero = ?, servicio = ?, telefono = ?, correo = ?, 
             alergias = ?, notas = ?, estatusCliente = ?, costoEstimado = ?, updated_at = NOW() 
             WHERE id_cliente = ?";
 
         $actualizado = DB::update($query, [
-            $request->input('nomcli'), $request->input('genero'), $request->input('servicio'),
-            $request->input('telefono'), $request->input('correo'), $request->input('alergias'),
-            $request->input('notas'), $request->input('estatusCliente'), $request->input('costoEstimado'),
+            $request->input('nomcli'), 
+            $request->input('foto'), // <-- Actualiza foto
+            $request->input('genero'), 
+            $request->input('servicio'),
+            $request->input('telefono'), 
+            $request->input('correo'), 
+            $request->input('alergias'),
+            $request->input('notas'), 
+            $request->input('estatusCliente'), 
+            $request->input('costoEstimado'),
             $id_cliente
         ]);
 

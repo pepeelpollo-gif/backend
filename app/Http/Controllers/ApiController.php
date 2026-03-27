@@ -9,14 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    // Función 1: Traer la lista de servicios para llenar tu combo desplegable
     public function cargaServicios()
     {
         $servicios = Servicio::orderBy('nombre_servicio', 'asc')->get();
         return response()->json($servicios, 200);
     }
 
-    // Función 2: Traer todos los clientes registrados para tu Reportecita.js
+    public function obtenerServicios() {
+        $servicios = DB::select('SELECT * FROM servicios ORDER BY id_servicio DESC');
+        return response()->json($servicios, 200);
+    }
+
+
     public function cargaClientes()
     {
         $clientes = Cliente::orderBy('nomcli', 'asc')->get();
@@ -111,7 +115,6 @@ class ApiController extends Controller
         return response()->json(['mensaje' => 'Servicio no encontrado'], 404);
     }
 
-    // 3. POST: Crear un nuevo servicio
     public function altaServicio(Request $request) {
         $query = "INSERT INTO servicios (nombre_servicio, precio, created_at, updated_at) 
                   VALUES (?, ?, NOW(), NOW())";
@@ -127,7 +130,6 @@ class ApiController extends Controller
         return response()->json(['mensaje' => 'Error al crear el servicio'], 500);
     }
 
-    // 4. PUT: Modificar un servicio existente
     public function modificaServicio(Request $request, $id_servicio) {
         $query = "UPDATE servicios SET 
                   nombre_servicio = ?, precio = ?, updated_at = NOW() 
@@ -145,7 +147,6 @@ class ApiController extends Controller
         return response()->json(['mensaje' => 'No se pudo actualizar o no hubo cambios'], 404);
     }
 
-    // 5. DELETE: Eliminar un servicio
     public function eliminaServicio($id_servicio) {
         $eliminado = DB::delete('DELETE FROM servicios WHERE id_servicio = ?', [$id_servicio]);
 

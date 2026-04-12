@@ -41,14 +41,14 @@ class ApiController extends Controller
 
     public function buscaclienteporide($idcliente)
     {
-        $consulta = \DB::select("SELECT e.ide, e.nombre, e.apellidos, e.edad, e.sexo,
+        $consulta = DB::select("SELECT e.ide, e.nombre, e.apellidos, e.edad, e.sexo,
             a.nombre AS areatrabajo
             FROM empleados AS e
             INNER JOIN areas AS a ON a.ida = e.ida
             WHERE e.ide = $idcliente
             ORDER BY e.nombre ASC");
 
-        return response()->json($consulta, 201);
+        return response()->json($consulta[0], 201);
     }
 
     public function obtenerClientePorId($id_cliente) {

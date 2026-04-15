@@ -22,8 +22,7 @@ class ApiController extends Controller
 
 
     public function obtenerClientes() {
-        // Consultamos todos los clientes
-        $clientes = DB::select('SELECT * FROM clientes ORDER BY id_cliente DESC');
+        $clientes = DB::select('SELECT * FROM clientes ORDER BY id_cliente ASC');
         return response()->json($clientes, 200);
     }
 
